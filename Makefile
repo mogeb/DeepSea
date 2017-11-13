@@ -550,28 +550,29 @@ copy-files:
 	# in a buildroot on OBS, hence the leading '-' to ignore failures
 	# and '|| true' to suppress some error output, but will work fine
 	# in development when root runs `make install`.
-	-chown salt:salt $(DESTDIR)/srv/salt/ceph/admin/cache || true
-	-chown salt:salt $(DESTDIR)/srv/salt/ceph/ganesha/cache || true
-	-chown salt:salt $(DESTDIR)/srv/salt/ceph/igw/cache || true
-	-chown salt:salt $(DESTDIR)/srv/salt/ceph/mds/cache || true
-	-chown salt:salt $(DESTDIR)/srv/salt/ceph/mgr/cache || true
-	-chown salt:salt $(DESTDIR)/srv/salt/ceph/mon/cache || true
-	-chown salt:salt $(DESTDIR)/srv/salt/ceph/openattic/cache || true
-	-chown salt:salt $(DESTDIR)/srv/salt/ceph/osd/cache || true
-	-chown salt:salt $(DESTDIR)/srv/salt/ceph/rgw/cache || true
-	-chown salt:salt $(DESTDIR)/srv/salt/ceph/configuration/files/ceph.conf.checksum || true
+	#-chown salt:salt $(DESTDIR)/srv/salt/ceph/admin/cache || true
+	#-chown salt:salt $(DESTDIR)/srv/salt/ceph/ganesha/cache || true
+	#-chown salt:salt $(DESTDIR)/srv/salt/ceph/igw/cache || true
+	#-chown salt:salt $(DESTDIR)/srv/salt/ceph/mds/cache || true
+	#-chown salt:salt $(DESTDIR)/srv/salt/ceph/mgr/cache || true
+	#-chown salt:salt $(DESTDIR)/srv/salt/ceph/mon/cache || true
+	#-chown salt:salt $(DESTDIR)/srv/salt/ceph/openattic/cache || true
+	#-chown salt:salt $(DESTDIR)/srv/salt/ceph/osd/cache || true
+	#-chown salt:salt $(DESTDIR)/srv/salt/ceph/rgw/cache || true
+	#-chown salt:salt $(DESTDIR)/srv/salt/ceph/configuration/files/ceph.conf.checksum || true
 
 install: copy-files
 	sed -i '/^sharedsecret: /s!{{ shared_secret }}!'`cat /proc/sys/kernel/random/uuid`'!' $(DESTDIR)/etc/salt/master.d/sharedsecret.conf
-	chown salt:salt $(DESTDIR)/etc/salt/master.d/*
+	#chown salt:salt $(DESTDIR)/etc/salt/master.d/*
 	echo "deepsea_minions: '*'" > /srv/pillar/ceph/deepsea_minions.sls
-	chown -R salt /srv/pillar/ceph
+	#chown -R salt /srv/pillar/ceph
 	sed -i '/^master_minion:/s!_REPLACE_ME_!'`cat /etc/salt/minion_id`'!' /srv/pillar/ceph/master_minion.sls
 	systemctl restart salt-master
-	zypper -n install salt-api
+	#zypper -n install salt-api
+	yum install -y salt-api
 	systemctl restart salt-api
 	# deepsea-cli
-	zypper -n install python-setuptools python-click
+	#zypper -n install python-setuptools python-click
 	python setup.py install --root=$(DESTDIR)/
 
 rpm: tarball test

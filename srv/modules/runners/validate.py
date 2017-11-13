@@ -191,7 +191,8 @@ class Util(object):
         return [elem.strip() for elem in list_str.split(delim) if elem.strip()]
 
 
-JEWEL_VERSION = "10.2"
+JEWEL_VERSION_NUMBER = "10.2"
+JEWEL_VERSION_STRING = "jewel"
 
 
 # pylint: disable=too-many-instance-attributes,too-many-public-methods
@@ -749,20 +750,20 @@ class Validate(object):
         target = deepsea_minions.DeepseaMinions()
         search = target.deepsea_minions
         local = salt.client.LocalClient()
-        contents = local.cmd(search, 'cmd.shell',
-                             ['/usr/bin/zypper info ceph'],
+        contents = local.cmd(search, 'deepsea.available_ceph_package_versions', [],
                              expr_form="compound")
-
         for minion in contents:
-            match = re.search(r'Version: (\S+)', contents[minion])
-            # Skip minions with no ceph repo
-            if match:
-                version = match.group(1)
+            versions = contents[minion]
+            if not versions:
+                self.errors.setdefault('ceph_version', []).append(
+                    "No Ceph versions are available for installation")
+            for version in versions:
+                if version == JEWEL_VERSION_NUMBER or version.lower() == JEWEL_VERSION_STRING:
+                    self._set_pass_status('ceph_version')
+                    return
 
-                # String comparison works for now
-                if version < JEWEL_VERSION:
-                    msg = "ceph version {} on minion {}".format(version, minion)
-                    self.errors.setdefault('ceph_version', []).append(msg)
+            msg = "ceph versions {} on minion {}".format(versions, minion)
+            self.errors.setdefault('ceph_version', []).append(msg)
 
         self._set_pass_status('ceph_version')
 

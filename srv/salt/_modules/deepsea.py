@@ -3,6 +3,8 @@
 
 from __future__ import absolute_import
 
+
+import re
 from collections import OrderedDict
 
 
@@ -95,3 +97,27 @@ def render_sls(state_arg):
         return result
     else:
         return None
+
+
+def available_ceph_package_versions():
+    """
+    This function checks which Ceph major versions are available for install
+    from the distro repostories
+    """
+    distro = __grains__.get('os_family', '')
+    versions = []
+    if distro == 'Suse':
+        pkg_desc = __salt__['cmd.shell']('/usr/bin/zypper info ceph')
+        match = re.search(r'Version: (\S+)', pkg_desc)
+        if match:
+            versions.append(match.group(1))
+    elif distro == 'RedHat':
+        pkg_list = __salt__['pkg.list_repo_pkgs']('*ceph*')
+        for pkg_name, _ in pkg_list.items():
+            if __grains__.get('osfullname', '') == 'CentOS Linux':
+                if pkg_name.startswith('centos-release-ceph'):
+                    versions.append(pkg_name.replace('centos-release-ceph-', ''))
+    else:
+        return None
+
+    return versions
