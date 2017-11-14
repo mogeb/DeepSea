@@ -1,8 +1,24 @@
+{% if grains.get('os_family', '') == 'RedHat' %}
+install_prometheus_repo:
+  cmd.run:
+    - name: 'curl -s https://packagecloud.io/install/repositories/prometheus-rpm/release/script.rpm.sh | bash'
+    - fire_event: True
+
+install_node_exporter:
+  pkg.installed:
+    - name: node_exporter
+    - refresh: True
+    - fire_event: True
+
+{% else %}
+
 install node exporter package:
   pkg.installed:
     - name: golang-github-prometheus-node_exporter
     - refresh: True
     - fire_event: True
+
+{% endif %}
 
 set node exporter service args:
   file.managed:
@@ -13,11 +29,25 @@ set node exporter service args:
               -collector.filesystem.ignored-mount-points=^/(sys|proc|dev|run)($|/) \
               -collector.textfile.directory=/var/lib/prometheus/node-exporter"
 
+{% if grains.get('os_family', '') == 'RedHat' %}
+
+install smartmontools and cron packages:
+  pkg.installed:
+    - pkgs:
+      - cronie
+      - smartmontools
+    - fire_event: True
+
+{% else %}
+
 install smartmontools and cron packages:
   pkg.installed:
     - pkgs:
       - cron
       - smartmontools
+    - fire_event: True
+
+{% endif %}
 
 smartmon text exporter:
   file.managed:
@@ -36,6 +66,17 @@ run smartmon exporter hourly:
         #!/bin/sh
         /var/lib/prometheus/node-exporter/smartmon.sh > /var/lib/prometheus/node-exporter/smartmon.prom 2> /dev/null
 
+{% if grains.get('os_family', '') == 'RedHat' %}
+
+start node exporter:
+  service.running:
+    - name: node_exporter
+    - enable: True
+    - watch:
+      - file: /etc/sysconfig/prometheus-node_exporter
+
+{% else %}
+
 start node exporter:
   service.running:
     - name: prometheus-node_exporter
@@ -43,3 +84,5 @@ start node exporter:
     # restart node_exporter if env_args change
     - watch:
       - file: /etc/sysconfig/prometheus-node_exporter
+
+{% endif %}
