@@ -2,7 +2,7 @@
 install rbd exporter dependencies:
   pkg.installed:
     - pkgs:
-      - cron
+      - cronie
       - jq
     - refresh: True
 

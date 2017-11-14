@@ -4,16 +4,24 @@
 {% set time_server = [time_server] %}
 {% endif %}
 
-ntp:
+install_ntp_packages:
   pkg.installed:
     - pkgs:
       - ntp
+{% if grains.get('os_family', '') == 'RedHat' %}
+      - sntp
+{% endif %}
     - refresh: True
+    - fire_event: True
 
 {% if salt['service.status']('ntpd') == False %}
 sync time:
   cmd.run:
+  {% if grains.get('os_family', '') == 'Suse' %}
     - name: "sntp -S -c {{ time_server[0] }}"
+  {% else %}
+    - name: "sntp {{ time_server[0] }}"
+  {% endif %}
 {% endif %}
 
 {% if grains['id'] not in salt['pillar.get']('time_server') %}
@@ -34,5 +42,6 @@ start ntp:
   service.running:
     - name: ntpd
     - enable: True
+    - fire_event: True
 {% endif %}
 

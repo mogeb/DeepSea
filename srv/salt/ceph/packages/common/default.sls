@@ -50,6 +50,7 @@ stage prep dependencies CentOS:
       - iperf3
       - lshw
       - hwinfo
+      - python-ipaddress
     - fire_event: True
     - refresh: True
 
