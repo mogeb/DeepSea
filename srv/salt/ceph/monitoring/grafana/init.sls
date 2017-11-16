@@ -11,6 +11,23 @@ configure_grafana_repo:
 
 {% endif %}
 
+{% if grains.get('os_family', '') == 'Debian' %}
+
+install_curl:
+  pkg.installed:
+    - name: curl
+
+configure_grafana_repo:
+  pkgrepo.managed:
+    - name: deb https://packagecloud.io/grafana/stable/debian/ jessie main
+    - humanname: Grafana Repo
+    - key_url: https://packagecloud.io/gpg.key
+    - file: /etc/apt/sources.list.d/grafana.list
+    - enabled: True
+    - fire_event: True
+
+{% endif %}
+
 grafana:
   pkg.installed:
     - name: grafana
