@@ -1,3 +1,4 @@
+{% do salt['saltutil.runner']('saltutil.sync_modules') %}
 {% if salt['saltutil.runner']('validate.setup') == False %}
 
 validate failed:

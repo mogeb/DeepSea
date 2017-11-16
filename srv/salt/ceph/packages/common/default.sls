@@ -51,6 +51,7 @@ stage prep dependencies CentOS:
       - lshw
       - hwinfo
       - python-ipaddress
+      - python-netaddr
     - fire_event: True
     - refresh: True
 
