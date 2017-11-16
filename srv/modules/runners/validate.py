@@ -191,7 +191,11 @@ class Util(object):
         return [elem.strip() for elem in list_str.split(delim) if elem.strip()]
 
 
-JEWEL_VERSION = "10.2"
+JEWEL_VERSION_NUMBER = "10.2"
+JEWEL_VERSION_STRING = "jewel"
+LUMINOUS_VERSION_NUMBER = "12.2"
+LUMINOUS_VERSION_NUMBER_MAJOR = "12"
+LUMINOUS_VERSION_STRING = "luminous"
 
 
 # pylint: disable=too-many-instance-attributes,too-many-public-methods
@@ -770,6 +774,17 @@ class Validate(object):
                 self.errors.setdefault('ceph_version', []).append(
                     "The Ceph version available in {} is older than 'jewel' (10.2)"
                     .format(minion))
+#                    "No Ceph versions are available for installation")
+#            for version in versions:
+#                if version == JEWEL_VERSION_NUMBER or version.lower() == JEWEL_VERSION_STRING:
+#                    self._set_pass_status('ceph_version')
+#                    return
+#                if version.split('.')[0] == LUMINOUS_VERSION_NUMBER_MAJOR or version.lower() == LUMINOUS_VERSION_STRING:
+#                    self._set_pass_status('ceph_version')
+#                    return
+
+#            msg = "ceph versions {} on minion {}".format(versions, minion)
+#            self.errors.setdefault('ceph_version', []).append(msg)
 
         self._set_pass_status('ceph_version')
 
