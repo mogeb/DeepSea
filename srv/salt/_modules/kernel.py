@@ -109,8 +109,23 @@ def installed_kernel_version():
     """
     Return the installed kernel version
     """
-    pkg_info = __salt__['pkg.info_installed']('kernel')
-    if pkg_info:
-        pkg_info = pkg_info['kernel']
-        return "{}-{}.{}".format(pkg_info['version'], pkg_info['release'], pkg_info['arch'])
+    distro = __grains__.get('os_family', '')
+    os = __grains__.get('os', '')
+    # On Ubuntu, 'distro; is 'Debian'. However, I'm not sure if the same packages and versioning
+    # scheme is used by Debian. If so, we can use "distro == 'Debian" instead of "os == Ubuntu"
+    if os == 'Ubuntu':
+        pkg_info = __salt__['pkg.info_installed']('linux-generic')
+        if pkg_info:
+            pkg_info = pkg_info['linux-generic']['version']
+            pkg_info_list = pkg_info.split('.')
+            # We'd have a problem here if someone used a vanilla kernel that they've compiled
+            # themselves
+            return "{}.{}.{}-{}-generic".format(pkg_info_list[0], pkg_info_list[1], pkg_info_list[2], pkg_info_list[3])
+    else:
+        pkg_info = __salt__['pkg.info_installed']('kernel')
+        if pkg_info:
+            pkg_info = pkg_info['kernel']
+            return "{}-{}.{}".format(pkg_info['version'], pkg_info['release'], pkg_info['arch'])
+        return None
+
     return None
