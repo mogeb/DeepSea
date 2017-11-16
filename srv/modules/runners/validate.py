@@ -758,7 +758,7 @@ class Validate(object):
                 self.errors.setdefault('ceph_version', []).append(
                     "No Ceph versions are available for installation")
             for version in versions:
-                if version == JEWEL_VERSION_NUMBER or version.lower() == JEWEL_VERSION_STRING:
+                if version >= JEWEL_VERSION_NUMBER or version.lower() >= JEWEL_VERSION_STRING:
                     self._set_pass_status('ceph_version')
                     return
 
