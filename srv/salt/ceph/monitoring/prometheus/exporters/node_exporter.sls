@@ -14,6 +14,18 @@ install_node_exporter:
     - refresh: True
     - fire_event: True
 
+{% set prometheus_node_exporter_config = '/etc/sysconfig/prometheus-node_exporter' %}
+
+{% elif grains.get('os_family', '') == 'Debian' %}
+
+install_node_exporter:
+  pkg.installed:
+    - name: prometheus-node-exporter
+    - refresh: True
+    - fire_event: True
+
+{% set prometheus_node_exporter_config = '/etc/default/prometheus-node-exporter' %}
+
 {% else %}
 
 install node exporter package:
@@ -22,11 +34,13 @@ install node exporter package:
     - refresh: True
     - fire_event: True
 
+{% set prometheus_node_exporter_config = '/etc/sysconfig/prometheus-node_exporter' %}
+
 {% endif %}
 
 set node exporter service args:
   file.managed:
-    - name: /etc/sysconfig/prometheus-node_exporter
+    - name: {{ prometheus_node_exporter_config }}
     - mode: 644
     - contents: |
         ARGS="-collector.diskstats.ignored-devices=^(ram|loop|fd)\d+$ \
@@ -77,7 +91,16 @@ start node exporter:
     - name: node_exporter
     - enable: True
     - watch:
-      - file: /etc/sysconfig/prometheus-node_exporter
+      - file: {{ prometheus_node_exporter_config  }}
+
+{% elif grains.get('os_family', '') == 'Debian' %}
+
+start node exporter:
+  service.running:
+    - name: prometheus-node-exporter
+    - enable: True
+    - watch:
+      - file: {{ prometheus_node_exporter_config  }}
 
 {% else %}
 
@@ -87,6 +110,6 @@ start node exporter:
     - enable: True
     # restart node_exporter if env_args change
     - watch:
-      - file: /etc/sysconfig/prometheus-node_exporter
+      - file: {{ prometheus_node_exporter_config  }}
 
 {% endif %}

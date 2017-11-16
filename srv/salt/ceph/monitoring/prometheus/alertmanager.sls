@@ -11,6 +11,19 @@ start alertmanager service:
     - name: alertmanager
     - enable: True
 
+{% elif grains.get('os_family', '') == 'Debian' %}
+
+install_alertmanager:
+  pkg.installed:
+    - name: prometheus-alertmanager
+    - refresh: True
+    - fire_event: True
+
+start alertmanager service:
+  service.running:
+    - name: prometheus-alertmanager
+    - enable: True
+
 {% else %}
 
 golang-github-prometheus-alertmanager:
