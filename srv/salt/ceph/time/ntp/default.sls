@@ -17,8 +17,6 @@ install_ntp_packages:
 service_reload:
   module.run:
     - name: service.systemctl_reload
-    - require:
-      - pkg: install_ntp_packages
 
 {% if salt['service.status']('ntpd') == False %}
 sync time:
@@ -49,7 +47,5 @@ start ntp:
     - name: ntpd
     - enable: True
     - fire_event: True
-    - require:
-      - module: service_reload
 {% endif %}
 
