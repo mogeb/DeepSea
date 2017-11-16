@@ -14,6 +14,14 @@ install_prometheus:
     - refresh: True
     - fire_event: True
 
+{% elif grains.get('os_family', '') == 'Debian' %}
+
+install_prometheus:
+  pkg.installed:
+    - name: prometheus
+    - refresh: True
+    - fire_event: True
+
 {% else %}
 
 golang-github-prometheus-prometheus:
