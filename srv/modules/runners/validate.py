@@ -191,8 +191,7 @@ class Util(object):
         return [elem.strip() for elem in list_str.split(delim) if elem.strip()]
 
 
-JEWEL_VERSION_NUMBER = "10.2"
-JEWEL_VERSION_STRING = "jewel"
+JEWEL_VERSION = "10.2"
 
 
 # pylint: disable=too-many-instance-attributes,too-many-public-methods
@@ -750,20 +749,22 @@ class Validate(object):
         target = deepsea_minions.DeepseaMinions()
         search = target.deepsea_minions
         local = salt.client.LocalClient()
-        contents = local.cmd(search, 'deepsea.available_ceph_package_versions', [],
-                             expr_form="compound")
-        for minion in contents:
-            versions = contents[minion]
-            if not versions:
+        contents = local.cmd(search, 'pkg.latest_version', ['ceph'], expr_form="compound")
+        for minion, version in contents.items():
+            if not version:
                 self.errors.setdefault('ceph_version', []).append(
-                    "No Ceph versions are available for installation")
-            for version in versions:
-                if version >= JEWEL_VERSION_NUMBER or version.lower() >= JEWEL_VERSION_STRING:
-                    self._set_pass_status('ceph_version')
-                    return
-
-            msg = "ceph versions {} on minion {}".format(versions, minion)
-            self.errors.setdefault('ceph_version', []).append(msg)
+                    "No Ceph version is available for installation in {}".format(minion))
+            else:
+                colon_idx = version.find(':')
+                if colon_idx != -1:
+                    version = version[colon_idx+1:]
+                dash_idx = version.rfind('-')
+                if dash_idx != -1:
+                    version = version[:dash_idx]
+                if version < JEWEL_VERSION:
+                    self.errors.setdefault('ceph_version', []).append(
+                        "The Ceph version available in {} is older than 'jewel' (10.2)"
+                        .format(minion))
 
         self._set_pass_status('ceph_version')
 
