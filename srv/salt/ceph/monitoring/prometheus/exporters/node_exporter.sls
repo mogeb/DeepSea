@@ -1,7 +1,11 @@
-{% if grains.get('os_family', '') == 'RedHat' %}
+{% if grains.get('os', '') == 'CentOS' %}
 install_prometheus_repo:
-  cmd.run:
-    - name: 'curl -s https://packagecloud.io/install/repositories/prometheus-rpm/release/script.rpm.sh | bash'
+  pkgrepo.managed:
+    - name: prometheus-rpm_release
+    - humanname: Prometheus release repo
+    - baseurl: https://packagecloud.io/prometheus-rpm/release/el/$releasever/$basearch
+    - gpgcheck: False
+    - enabled: True
     - fire_event: True
 
 install_node_exporter:
@@ -29,7 +33,7 @@ set node exporter service args:
               -collector.filesystem.ignored-mount-points=^/(sys|proc|dev|run)($|/) \
               -collector.textfile.directory=/var/lib/prometheus/node-exporter"
 
-{% if grains.get('os_family', '') == 'RedHat' %}
+{% if grains.get('os', '') == 'CentOS' %}
 
 install smartmontools and cron packages:
   pkg.installed:
@@ -66,7 +70,7 @@ run smartmon exporter hourly:
         #!/bin/sh
         /var/lib/prometheus/node-exporter/smartmon.sh > /var/lib/prometheus/node-exporter/smartmon.prom 2> /dev/null
 
-{% if grains.get('os_family', '') == 'RedHat' %}
+{% if grains.get('os', '') == 'CentOS' %}
 
 start node exporter:
   service.running:

@@ -109,19 +109,8 @@ def installed_kernel_version():
     """
     Return the installed kernel version
     """
-    distro = __grains__.get('os_family', '')
-    if distro == 'Suse':
-        kernel_pkg_prefix = 'kernel-default'
-        kernel_installed_pkg = __salt__['cmd.shell']('rpm -q --last {}'.format(kernel_pkg_prefix))
-        if kernel_installed_pkg:
-            kernel_installed_pkg = kernel_installed_pkg.split('\n')[0].split(' ')[0]
-            return kernel_installed_pkg.replace('{}-'.format(kernel_pkg_prefix), '')
-    elif distro == 'RedHat':
-        pkg_info = __salt__['pkg.info_installed']('kernel')
-        if pkg_info:
-            pkg_info = pkg_info['kernel']
-            return "{}-{}.{}".format(pkg_info['version'], pkg_info['release'], pkg_info['arch'])
-    else:
-        return None
-
+    pkg_info = __salt__['pkg.info_installed']('kernel')
+    if pkg_info:
+        pkg_info = pkg_info['kernel']
+        return "{}-{}.{}".format(pkg_info['version'], pkg_info['release'], pkg_info['arch'])
     return None

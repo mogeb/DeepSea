@@ -1,7 +1,11 @@
-{% if grains.get('os_family', '') == 'RedHat' %}
+{% if grains.get('os', '') == 'CentOS' %}
 install_prometheus_repo:
-  cmd.run:
-    - name: 'curl -s https://packagecloud.io/install/repositories/prometheus-rpm/release/script.rpm.sh | bash'
+  pkgrepo.managed:
+    - name: prometheus-rpm_release
+    - humanname: Prometheus release repo
+    - baseurl: https://packagecloud.io/prometheus-rpm/release/el/$releasever/$basearch
+    - gpgcheck: False
+    - enabled: True
     - fire_event: True
 
 install_prometheus:

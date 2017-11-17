@@ -1,4 +1,4 @@
-{% if grains.get('os_family', '') == 'RedHat' %}
+{% if grains.get('os', '') == 'CentOS' %}
 
 configure_grafana_repo:
   pkgrepo.managed:

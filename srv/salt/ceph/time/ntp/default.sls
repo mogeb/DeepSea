@@ -8,7 +8,7 @@ install_ntp_packages:
   pkg.installed:
     - pkgs:
       - ntp
-{% if grains.get('os_family', '') == 'RedHat' %}
+{% if grains.get('os', '') == 'CentOS' %}
       - sntp
 {% endif %}
     - refresh: True

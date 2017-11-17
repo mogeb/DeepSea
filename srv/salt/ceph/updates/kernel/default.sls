@@ -1,4 +1,3 @@
-{% if grains.get('os_family', '') == 'Suse' %}
 switch kernel:
   module.run:
     - name: kernel.replace
@@ -17,10 +16,3 @@ packagemanager patch only kernel:
         'debug': {{ salt['pillar.get']('debug', False) }}
         'kernel': True
     - fire_event: True
-
-{% else %}
-
-noop_state:
-  test.nop
-
-{% endif %}

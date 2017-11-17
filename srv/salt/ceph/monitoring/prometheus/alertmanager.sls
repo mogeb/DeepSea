@@ -1,4 +1,4 @@
-{% if grains.get('os_family', '') == 'RedHat' %}
+{% if grains.get('os', '') == 'CentOS' %}
 
 install_alertmanager:
   pkg.installed:
