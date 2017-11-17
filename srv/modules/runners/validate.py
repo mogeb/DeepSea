@@ -752,19 +752,24 @@ class Validate(object):
         contents = local.cmd(search, 'pkg.latest_version', ['ceph'], expr_form="compound")
         for minion, version in contents.items():
             if not version:
-                self.errors.setdefault('ceph_version', []).append(
-                    "No Ceph version is available for installation in {}".format(minion))
-            else:
-                colon_idx = version.find(':')
-                if colon_idx != -1:
-                    version = version[colon_idx+1:]
-                dash_idx = version.rfind('-')
-                if dash_idx != -1:
-                    version = version[:dash_idx]
-                if version < JEWEL_VERSION:
+                info = local.cmd(minion, 'pkg.info_installed', ['ceph'])
+                if info and 'version' in info[minion]['ceph']:
+                    version = info[minion]['ceph']['version']
+                else:
                     self.errors.setdefault('ceph_version', []).append(
-                        "The Ceph version available in {} is older than 'jewel' (10.2)"
-                        .format(minion))
+                        "No Ceph version is available for installation in {}".format(minion))
+                    continue
+
+            colon_idx = version.find(':')
+            if colon_idx != -1:
+                version = version[colon_idx+1:]
+            dash_idx = version.rfind('-')
+            if dash_idx != -1:
+                version = version[:dash_idx]
+            if version < JEWEL_VERSION:
+                self.errors.setdefault('ceph_version', []).append(
+                    "The Ceph version available in {} is older than 'jewel' (10.2)"
+                    .format(minion))
 
         self._set_pass_status('ceph_version')
 

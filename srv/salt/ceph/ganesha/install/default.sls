@@ -1,13 +1,3 @@
-
-{% if grains.get('os_family', '') == 'Suse' %}
-
-install ganesha:
-  cmd.run:
-    - name: "zypper --non-interactive in nfs-ganesha nfs-ganesha-ceph nfs-ganesha-rgw nfs-ganesha-utils"
-    - shell: /bin/bash
-
-{% else %}
-
 {% if grains.get('os', '') == 'CentOS' %}
 
 install_ganesha_repo:
@@ -27,7 +17,7 @@ install_ganesha:
         - nfs-ganesha
         - nfs-ganesha-ceph
         - nfs-ganesha-rgw
-    - fire_event: True
-
+{% if grains.get('os_family', '') == 'Suse' %}
+        - nfs-ganesha-utils
 {% endif %}
-
+    - fire_event: True
