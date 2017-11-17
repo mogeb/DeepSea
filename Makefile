@@ -589,8 +589,7 @@ install: copy-files
 	chown -R $(USER) /srv/pillar/ceph
 	sed -i '/^master_minion:/s!_REPLACE_ME_!'`cat /etc/salt/minion_id`'!' /srv/pillar/ceph/master_minion.sls
 	systemctl restart salt-master
-	$(PKG_INSTALL) salt-api
-	yum install -y salt-api
+	$(PKG_INSTALL) salt-api python-ipaddress
 	systemctl restart salt-api
 	# deepsea-cli
 	$(PKG_INSTALL) python-setuptools python-click
