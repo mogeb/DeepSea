@@ -11,9 +11,21 @@ import logging
 from collections import OrderedDict
 import salt.client
 import salt.utils.error
+import os.path
 
 
 log = logging.getLogger(__name__)
+
+
+def find_binary(name):
+    paths = ['/usr/sbin', '/sbin']
+
+    for path in paths:
+        full_path = os.path.join(path, name)
+        if os.path.isfile(full_path):
+            return full_path
+
+    return None
 
 
 # pylint: disable=no-init,too-few-public-methods
@@ -50,8 +62,13 @@ class Checks(object):
         Scan all minions for the default firewall settings.  Set warnings
         for any differences.
         """
+        iptables = find_binary('iptables')
+        if iptables == None:
+            log.error('iptables not found')
+            exit(1)
+
         contents = self.local.cmd(self.search, 'cmd.shell',
-                                  ['/usr/sbin/iptables -S'],
+                                  [iptables + ' -S'],
                                   expr_form="compound")
         for minion in contents:
             # Accept custom named chains
@@ -70,8 +87,14 @@ class Checks(object):
         """
         Scan minions for apparmor settings.
         """
+        apparmor_status = find_binary('apparmor_status')
+        if apparmor_status == None:
+            # We accept that apparmor isn't installed
+            self.passed['apparmor'] = "disabled"
+            return
+
         contents = self.local.cmd(self.search, 'cmd.shell',
-                                  [('/usr/sbin/apparmor_status --enabled '
+                                  [(apparmor_status + ' --enabled '
                                     '2>/dev/null; echo $?')],
                                   expr_form="compound")
         for minion in contents:
