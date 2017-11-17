@@ -11,11 +11,6 @@ add_mine_cephdisks.list_to_minion:
     - name: mine.send
     - func: cephdisks.list
 
-add_mine_cephimages.list_to_minion:
-  module.run:
-    - name: mine.send
-    - func: cephimages.list
-
 manage_salt_minion_for_mines:
   module.run:
     - name: mine.update
