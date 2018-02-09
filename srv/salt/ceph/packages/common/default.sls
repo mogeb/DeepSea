@@ -11,6 +11,7 @@ stage prep dependencies suse:
       - python-boto
       - python-rados
       - iperf
+      - tuned
     - fire_event: True
 
 {% elif os == 'Ubuntu' %}
