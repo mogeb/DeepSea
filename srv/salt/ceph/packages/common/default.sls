@@ -22,6 +22,7 @@ stage prep dependencies suse:
       - iperf
       - lsof
       - jq
+      - tuned
     - fire_event: True
     - refresh: True
 
