@@ -22,6 +22,8 @@ stage prep dependencies suse:
       - iperf
       - lsof
       - jq
+      - tuned
+      - libgio-2_0-0
     - fire_event: True
     - refresh: True
 
