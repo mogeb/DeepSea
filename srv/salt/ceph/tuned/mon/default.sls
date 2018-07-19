@@ -15,7 +15,7 @@ start tuned:
     - name: tuned
     - enable: True
 
-apply tuned ses mon:
+apply tuned ceph mon:
   cmd.run:
     - name: 'tuned-adm profile ceph-mon'
 

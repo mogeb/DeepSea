@@ -17,7 +17,7 @@ start tuned:
     - name: tuned
     - enable: True
 
-apply tuned ses osd:
+apply tuned ceph osd:
   # There's a bug with the tuned 'profile' state if the tuned is off
   # tuned.profile:
   #   - name: "ceph-osd"

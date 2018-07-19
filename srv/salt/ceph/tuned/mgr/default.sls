@@ -11,6 +11,6 @@ start tuned:
     - name: tuned
     - enable: True
 
-apply tuned ses mgr:
+apply tuned ceph mgr:
   cmd.run:
     - name: 'tuned-adm profile ceph-mgr'

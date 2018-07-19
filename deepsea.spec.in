@@ -745,6 +745,8 @@ the README for more information.
 %dir /srv/salt/ceph/smoketests/macros/os_switch
 %dir /srv/salt/ceph/smoketests/quiescent
 %dir /srv/salt/ceph/smoketests/restart
+%dir /srv/salt/ceph/smoketests/tuned
+%dir /srv/salt/ceph/smoketests/tuned/off
 %dir /srv/salt/ceph/tests
 %dir /srv/salt/ceph/tests/keyrings
 %dir /srv/salt/ceph/tests/os_switch
@@ -770,10 +772,14 @@ the README for more information.
 %dir /srv/salt/ceph/tests/restart/rgw/forced
 %dir /srv/salt/ceph/tests/restart/rgw/nochange
 /srv/salt/ceph/smoketests/apparmor/*.sls
+%dir /srv/salt/ceph/tests/tuned
+%dir /srv/salt/ceph/tests/tuned/off
 /srv/salt/ceph/smoketests/keyrings/*.sls
 /srv/salt/ceph/smoketests/macros/os_switch/*.sls
 /srv/salt/ceph/smoketests/quiescent/*.sls
 /srv/salt/ceph/smoketests/restart/*.sls
+/srv/salt/ceph/smoketests/tuned/*.sls
+/srv/salt/ceph/smoketests/tuned/off/*.sls
 /srv/salt/ceph/tests/keyrings/*.sls
 /srv/salt/ceph/tests/os_switch/*.sls
 /srv/salt/ceph/tests/quiescent/*.sls
@@ -795,5 +801,6 @@ the README for more information.
 /srv/salt/ceph/tests/restart/rgw/change/*.sls
 /srv/salt/ceph/tests/restart/rgw/forced/*.sls
 /srv/salt/ceph/tests/restart/rgw/nochange/*.sls
-
+/srv/salt/ceph/tests/tuned/*.sls
+/srv/salt/ceph/tests/tuned/off/*.sls
 %changelog
